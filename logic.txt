@@ -1,0 +1,130 @@
+file list.cpp
+
+#include <iostream>
+#include <iterator>
+
+#include "list.hpp"
+
+using namespace std;
+
+void initialize(List& list) {
+    list.last = -1;
+};
+
+bool isEmpty(List& list) {
+    return list.last == -1 ? true : false;
+    /*
+        if (list.last == -1) {
+            return true;
+        }
+        return false;
+    */
+};
+
+void show(List& list) {
+    for (int i = 0; i <= list.last; i++) {
+        cout << "position " << i << " = " << list.vect[i] << "\n";
+    }
+};
+
+bool isFull(List& list) {
+    return list.last+1 == MAX_TAM ? true : false;
+    /*
+    if (list.last+1 == MAX_TAM) {
+        return true;
+    }
+    return false;
+    */
+};
+
+bool insertEnd(List& list, int element) {
+    bool empty = isEmpty(list);
+    if (empty) {
+        list.vect[0] = element;
+        list.last = 0;
+        return true;
+    }
+    
+    if (list.last < MAX_TAM) {
+        list.last++;
+        list.vect[list.last] = element;
+        return true;
+    }
+
+    return false;
+};
+
+bool insert(List& list, int element) {
+    if (isFull(list)) return false;
+    
+    if (isEmpty(list) || element > list.vect[list.last]) {
+        return insertEnd(list, element);
+    }
+    
+    // continue..
+    return false;
+};
+
+int search(List& list, int element) {
+    bool empty = isEmpty(list);
+    if (empty) {
+        return -1;
+    }
+    for (int i = 0; i < list.last; i++) {
+        if (list.vect[i] == element) {
+            return i;
+        }
+    }
+    return -1;
+};
+
+==============================//===============================
+
+file list.hpp
+
+#include <iostream>
+
+#ifndef MAX_TAM
+#define MAX_TAM 50
+
+struct List {
+    int vect[MAX_TAM];
+    int last;
+};
+
+void initialize(List& list);
+void show(List& list);
+bool insertEnd(List& list, int element);
+bool insert(List& list, int element);
+bool isEmpty(List& list);
+bool isFull(List& list);
+int search(List& list, int element);
+
+#endif
+
+==============================//===============================
+
+file main.cpp
+
+
+#include <iostream>
+#include "list.hpp"
+
+using namespace std;
+
+int main()
+{
+    struct List l;
+
+    initialize(l);
+
+    insertEnd(l, 4);
+    insertEnd(l, 5);
+    insertEnd(l, 2);
+    
+    cout << "Last: " << l.last << "\n";
+    
+    show(l);
+    
+    return 0;
+}
