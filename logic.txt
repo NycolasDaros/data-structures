@@ -1,3 +1,115 @@
+int a = 15;
+float b = 3.14;
+char c = 'B';
+
+para declarar essas variaveis, primeiramente, a linguagem reserva um lugar para esse tipo de dado na memoria
+(se inteiro, 2 lugares na memoria; se float, 4 lugares na memoria..)
+O compilador, entao, guarda o valor declarado na memoria ja reservado.
+
+struct Data {
+    int dia, mes, ano;
+}
+
+name  |  pos memoria
+a     |  D:3
+b     |  F:7
+c     |  B:11
+d     |  D:11
+e     |  B:2
+f     |  H:1
+g     |  G:12
+
+ponteira é uma variável, guarda o endereco da memória;
+
+int *e;
+float *f;
+Data *g;
+
+Não podemos passar numeros, characters, pois guadam o endereço da memória:
+
+e = 5; -> ERRADO
+e = &a; -> CERTO
+
+
+int a = 15;
+float b = 3.14;
+Data d;
+d.dia = 16;
+d.mes = 3;
+d.ano = 2026;
+
+cout << "a = " << a << endl;
+cout << "b = " << b << endl;
+cout << "d = " << d.dia << "/" << d.mes << "/" << d.ano << endl;
+
+cout << "&a = " << &a << endl;
+cout << "&b = " << &b << endl;
+cout << "&d = " << &d << endl;
+
+int *e = &a;
+float *f = &b;
+Data *g = &d;
+
+// 
+cout << "e = " << e << endl;
+cout << "f = " << f << endl;
+cout << "g = " << g << endl;
+//
+cout << "&e = " << &e << endl;
+cout << "&f = " << &f << endl;
+cout << "&g = " << &g << endl;
+
+*e = 5;
+*f = 2.22;
+g->dia = 16;
+g->mes = 9;
+g->ano = 2024;
+
+cout << "a = " << a << endl;
+cout << "b = " << b << endl;
+cout << "d = " << d.dia << "/" << d.mes << "/" << d.ano << endl;
+
+// ganho uma nova regiao de memoria e o endereco é guardado em h
+// feito em tempo de compilação
+Data *h = new Data;
+
+h->dia = 25;
+h->mes = 12;
+h->ano = 2025;
+
+cout << "h = " << h << endl;
+cout << "&h = " << &h << endl;
+cout << "H = " << h->dia << "/" << h->mes << "/" << h->ano << endl;
+
+// liberando o espaço de memória que no tempo de execução foi reservado;
+delete h;
+cout << "liberando memória do h";
+
+cout << "&h = " << &h << endl;
+
+int *vetor;
+int num;
+
+cout << "Digite um numero: ";
+cin >> num;
+
+// criando um vetor em tempo de execução
+vetor = new int[num];
+
+for (int i = 0; i < num; i++) {
+    vetor[i] = 3*i+4;
+}
+
+cout << "Vetor = ";
+for (int i = 0; i < num; i++) {
+    cout << vetor[i] << " ";
+}
+
+delete []vetor;
+cout << "liberando memória do vetor";
+
+
+
 file list.cpp
 
 #include <iostream>
