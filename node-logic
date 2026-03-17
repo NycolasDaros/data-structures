@@ -1,0 +1,84 @@
+LUE (Lista Unicamente Encadeade) Single Linked List
+
+Linked List
+
+linear sequence of nodes alocated in memory, which are linked (connected) through pointers.
+
+node {
+  T element;
+  Node* next;
+}
+
+Node
+element | pointer --> element | pointer
+
+
+
+
+===============================node.hpp=======================================
+
+
+
+#include <iostream>
+using namespace std;
+
+template <typename T>
+struct Node {
+    T element;
+    Node<T> *next;
+};
+
+// LUE (Lista unicamente encadeade)
+template <typename T>
+struct SingleLinkedList {
+    Node<T> *begin;
+    Node<T> *end;
+};
+
+template <typename T>
+void initialize(SingleLinkedList<T> *list) {
+    list->begin = NULL;
+    list->end = NULL;
+};
+
+template <typename T>
+void show(Node<T> &node) {
+    cout << node.element << " " << node.next << endl;
+};
+
+===============================main.cpp=======================================
+
+#include <iostream>
+#include "list.hpp"
+#include "node.hpp"
+
+using namespace std;
+
+/*
+    Abstract data type
+    - what type of data it going to handle
+    - the management size it going to hanle
+
+    operations
+    - initialize
+    - isEmpty
+    - insertEnd
+    - insert
+    - delete
+    - search
+    - show
+    - clean
+    
+*/
+
+
+int main() 
+{
+  
+    SingleLinkedList<int> *n, *n2, *n3;
+  
+    initialize(n);
+    initialize(n2);
+    initialize(n3);
+
+};
