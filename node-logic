@@ -71,6 +71,16 @@ using namespace std;
     
 */
 
+/*
+  INSERT
+  - Empty list
+      begin and end NULL
+
+  - beggining of list
+      
+
+
+*/
 
 int main() 
 {
