@@ -17,8 +17,6 @@ element | pointer --> element | pointer
 
 ===============================node.hpp=======================================
 
-
-
 #include <iostream>
 using namespace std;
 
@@ -36,14 +34,115 @@ struct SingleLinkedList {
 };
 
 template <typename T>
-void initialize(SingleLinkedList<T> *list) {
-    list->begin = NULL;
-    list->end = NULL;
+void initialize(SingleLinkedList<T> &l) {
+    l.begin = NULL;
+    l.end = NULL;
 };
 
 template <typename T>
-void show(Node<T> &node) {
-    cout << node.element << " " << node.next << endl;
+bool isEmpty(SingleLinkedList<T> &l) {
+    return (l.begin == NULL) ? true : false;
+}
+
+/*template <typename T>
+initializeNode(SingleLinkedList<T> &l, T element) {
+    n->element = element;
+    n->next = NULL;
+};
+*/
+
+template <typename T>
+void show(SingleLinkedList<T> &l) {
+    Node<T> *aux = l.begin;
+    while (aux != NULL) {
+        cout << aux->element << " ";
+        aux = aux->next;
+    };
+};
+
+template <typename T>
+bool insert(SingleLinkedList<T> &l, T element) {
+    Node<T> *n = new Node<T>;
+    if ( n == NULL ) return false;
+    n->element = element;
+    n->next = NULL;
+    //initializeNode(n, valor);
+
+    if (l.begin == NULL) { // INSERT EMPTY LIST
+        l.begin = n;
+        l.end = n;
+        cout << "\nSuccessful insert" << endl;
+    } 
+    else if (element < l.begin->element) { // INSERT TO THE BEGGINING
+        n->next = l.begin;
+        l.begin = n;
+    }
+    else if (element > l.end->element) { // INSERT TO THE END
+        l.end->next = n;
+        l.end = n;
+        cout << "\nSuccessful insert" << endl;
+    }
+    else { // INSERT IN THE MIDDLE
+        Node<T> *aux = l.begin;
+        while (aux->next != NULL) {
+            Node<T> *next = aux->next;
+            if (aux->element < element && element < next->element) {
+                aux->next = n;
+                n->next = next;
+            }
+            aux = aux->next;
+        }
+    }
+    
+    return true;
+};
+
+template <typename T>
+bool removeFrom(SingleLinkedList<T> &l, T element) {
+    if (isEmpty(l)) { // remove from empty list
+        cout << "\nNo element was removed!" << endl;
+        return false;
+    }
+    
+    if (l.begin->element == element) { // remove from the beggining
+        Node<T> *aux = l.begin;
+        if (l.begin == l.end) { // just one element on the list
+            l.begin = NULL;
+            l.end = NULL;
+            delete aux;
+            cout << "Item: " << element << " removed!" << endl;
+            return true;
+        }
+        l.begin = l.begin->next;
+        delete aux;
+        cout << "Item: " << element << " removed!" << endl;
+        return true;
+    }
+    
+    Node<T> *bef = l.begin;
+    while (bef != NULL) {
+        if (bef->next->element == element) {
+            
+            Node<T> *nodeToRemove = bef->next;
+            if (l.end == nodeToRemove) { // remove from the ending
+                bef->next = NULL;
+                l.end = bef;
+                delete nodeToRemove;
+                cout << "Item: " << element << " removed!" << endl;
+                return true;
+            }
+            
+            // remove from the middle
+            bef->next = nodeToRemove->next;
+            delete nodeToRemove;
+            cout << "Item: " << element << " removed!" << endl;
+            return true;
+        }
+        bef = bef->next;
+    }
+  
+    cout << "No element was find!" << endl;
+    return false;  
 };
 
 ===============================main.cpp=======================================
@@ -72,23 +171,51 @@ using namespace std;
 */
 
 /*
-  INSERT
-  - Empty list
-      begin and end NULL
+  INSERT  
+  - EMPTY LIST
+  - TO THE BEGGINING
+  - TO THE END
+  - IN THE MIDDLE
+*/
 
-  - beggining of list
-      
-
-
+/*
+  REMOVE
+  (1) remove from a value:
+  - search for the node with the value
+  - remove node from the linked list
+  - free the node from the memory (memory management) -> delete
+  
+  
 */
 
 int main() 
 {
   
-    SingleLinkedList<int> *n, *n2, *n3;
-  
-    initialize(n);
-    initialize(n2);
-    initialize(n3);
+    SingleLinkedList<int> l;
+ 
+    initialize(l);
+    
+    char option;
+    do {
+        
+        cout << "Options:\n1 (insert)\n2 (delete)\n3 (show)" << endl;
+        cin >> option;
+        int value = 0;
+        if (option == '1') {
+            cout << "insert a value: ";
+            cin >> value;
+            insert(l, value);
+        }
+        else if (option == '2') {
+            cout << "insert a value: ";
+            cin >> value;
+            removeFrom(l, value);
+        }
+        else {
+            show(l);
+        }
+        
+    } while (option != '0');
 
+    cout << "End!";
 };
