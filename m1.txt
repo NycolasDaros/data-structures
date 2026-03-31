@@ -1,0 +1,96 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+	float coef;
+	int expo;
+	Node *next;
+};
+
+struct SingleLinkedList {
+	Node *begin;
+	Node *end;
+};
+
+void initialize(SingleLinkedList &l) {
+	l.begin = NULL;
+	l.end = NULL;
+};
+
+bool isEmpty(SingleLinkedList &l) {
+	return (l.begin == NULL) ? true : false;
+};
+
+int length(SingleLinkedList &l) {
+	Node *aux = l.begin;
+	int count = 0;
+	while (aux != NULL) {
+		count++;
+		aux = aux->next;
+	};
+	cout << "Length: " << count << endl;
+	return count;
+};
+
+void show(SingleLinkedList &l) {
+	Node *aux = l.begin;
+	while (aux != NULL) {
+		cout << aux->coef << "x^" << aux->expo << " ";
+		aux = aux->next;
+	};
+};
+
+void freeMemory(SingleLinkedList &l) {
+    Node *aux = l.begin;
+    Node *n;
+    while (aux != NULL) {
+        n = aux;
+        aux = aux->next;
+        delete n;
+    }
+};
+
+bool search(SingleLinkedList &l, float coef) {
+    Node *aux = l.begin;
+    while (aux != NULL) {
+        if (aux->coef == coef) return true;
+        aux = aux->next;
+    }
+    return false;
+}
+
+bool insert(SingleLinkedList &l, float coef, int expo) {
+	Node *n = new Node;
+	if ( n == NULL ) return false;
+	n->coef = coef;
+	n->expo = expo;
+	n->next = NULL;
+
+	if (l.begin == NULL) { // INSERT EMPTY LIST
+		l.begin = n;
+		l.end = n;
+		cout << "\nSuccessful insert" << endl;
+	}
+	else if (element < l.begin->element) { // INSERT TO THE BEGGINING
+		n->next = l.begin;
+		l.begin = n;
+	}
+	else if (element > l.end->element) { // INSERT TO THE END
+		l.end->next = n;
+		l.end = n;
+		cout << "\nSuccessful insert" << endl;
+	}
+	else { // INSERT IN THE MIDDLE
+		Node *aux = l.begin;
+		while (aux->next != NULL) {
+			Node *next = aux->next;
+			if (aux->element < element && element < next->element) {
+				aux->next = n;
+				n->next = next;
+			}
+			aux = aux->next;
+		}
+	}
+
+	return true;
+};
