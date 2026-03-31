@@ -74,6 +74,16 @@ void show(SingleLinkedList<T> &l) {
 };
 
 template <typename T>
+bool search(SingleLinkedList<T> &l, T element) {
+    Node<T> *aux = l.begin;
+    while (aux != NULL) {
+        if (aux->element == element) return true;
+        aux = aux->next;
+    }
+    return false;
+};
+
+template <typename T>
 bool insert(SingleLinkedList<T> &l, T element) {
 	Node<T> *n = new Node<T>;
 	if ( n == NULL ) return false;
@@ -161,10 +171,8 @@ bool removeFrom(SingleLinkedList<T> &l, T element) {
 
 // continue develop the logic
 template <typename T>
-bool equal(const SingleLinkedList<T> &l1, const SingleLinkedList<T> &l2) {
-    int length_list1 = length(l1);
-    int length_list2 = length(l2);
-    if (length_list1 != length_list2) {
+bool equal(SingleLinkedList<T> &l1, SingleLinkedList<T> &l2) {
+    if (length(l1) != length(l2)) {
         cout << "Both lists are not the same size!" << endl;
         return false;
     }
@@ -206,24 +214,18 @@ template <typename T>
 SingleLinkedList<T> diference(SingleLinkedList<T> &l1, SingleLinkedList<T> &l2) {
     if (isEmpty(l1) && isEmpty(l2)) { 
         cout << "Both lists are empty!" << endl;
-        return NULL;
+        return SingleLinkedList<int> {};
     }
     
-    SingleLinkedList<T> l3;
+    SingleLinkedList<int> l3;
     initialize(l3);
     
-    Node<T> *aux1 = l1.begin;
-    while (aux1 != NULL) {
-        cout << "List 1. Checking: " << aux1->element << endl;
-        Node<T> *aux2 = l2.begin;
-        while (aux2 != NULL) {
-            cout << "List 2. Checking: " << aux2->element << endl;
-            if (aux1->element != aux2->element) {
-                insert(l3, aux2->element);
-                break;
-            }
+    Node<T> *aux = l1.begin;
+    while (aux != NULL) {
+        if (!search(l2, aux->element)) {
+            insert(l3, aux->element);
         }
-        aux1 = aux1->next;
+        aux = aux->next;
     };
     
     return l3;
@@ -283,7 +285,7 @@ int main()
     char option;
     do {
         
-        cout << "\nOptions:\n1 (insert)\n2 (delete)\n3 (show)\n4 (length)\n5 (equal)\n6 (copy)\n0 (exit)" << endl;
+        cout << "\nOptions:\n1 (insert)\n2 (delete)\n3 (show)\n4 (length)\n5 (equal)\n6 (copy)\n7 (diference)\n0 (exit)" << endl;
         cin >> option;
         int value = 0;
         // if (option == '1') {
@@ -330,6 +332,11 @@ int main()
             show(l1);
             cout << "\n";
             show(l2);
+        }
+        else if (option == '7'){
+            SingleLinkedList<int> l3 = diference(l1, l2);
+            cout << "l1 - l2: " << endl;
+            show(l3);
         }
         
     } while (option != '0');
