@@ -12,14 +12,112 @@ struct SingleLinkedList {
 	Node *end;
 };
 
+
+bool isEmpty(SingleLinkedList &l) {
+	return (l.begin == NULL) ? true : false;
+};
+
+// ======== TAD linked List =============
+
 void initialize(SingleLinkedList &l) {
 	l.begin = NULL;
 	l.end = NULL;
 };
 
-bool isEmpty(SingleLinkedList &l) {
-	return (l.begin == NULL) ? true : false;
+// order polinomio per expoent
+bool insert(SingleLinkedList &l, float coef, int expo) {
+	Node *n = new Node;
+	if ( n == NULL ) return false;
+	n->coef = coef;
+	n->expo = expo;
+	n->next = NULL;
+
+	if (l.begin == NULL) { // INSERT EMPTY LIST
+		l.begin = n;
+		l.end = n;
+	}
+	else if (expo < l.begin->expo) { // INSERT AT THE BEGGINING
+		n->next = l.begin;
+		l.begin = n;
+	}
+	else if (expo > l.end->expo) { // INSERT AT THE ENDING
+		l.end->next = n;
+		l.end = n;
+	}
+	else { // INSERT IN THE MIDDLE
+		Node *before = l.begin;
+		while (before->next != NULL) {
+			Node *next = before->next;
+			if (before->expo < expo && expo < next->expo) {
+				before->next = n;
+				n->next = next;
+			}
+			before = before->next;
+		}
+	}
+
+    cout << "\nSuccessful insert" << endl;
+	return true;
 };
+
+bool removeMono(SingleLinkedList &l, int expo) {
+    if (isEmpty(l)) {
+        cout << "No monomy was removed!" << endl;
+        return false;
+    }
+    
+    // removing at the beggining
+    if (l.begin->expo == expo) {
+        Node *aux = l.begin;
+        if (l.end->expo == expo) { // just one nomomy on the list
+            l.begin = NULL;
+            l.end = NULL;
+            delete aux;
+            return true;
+        }
+        l.begin = l.begin->next;
+        delete aux;
+        return true;
+    }
+    else {
+        Node *before = l.begin;
+        while (before != NULL) {
+            if (before->next != NULL && before->next->expo == expo) {
+                Node *nodeToRemove = before->next;
+                if (l.end == nodeToRemove) { // remove at the ending
+                    before->next = NULL;
+                    l.end = before;
+                    delete nodeToRemove;
+                    return true;
+                }
+                // remove at the middle
+                before->next = nodeToRemove->next;
+                delete nodeToRemove;
+                return true;
+            }
+            before = before->next;
+        }
+    }
+   
+    cout << "monomy was removed!" << endl;
+    return true;
+};
+
+void show(SingleLinkedList &l) {
+	Node *aux = l.begin;
+	cout << "P = ";
+	while (aux != NULL) {
+	    if (aux == l.end) {
+	        cout << aux->coef << "x^" << aux->expo;
+	        break;
+	    }
+		cout << aux->coef << "x^" << aux->expo << " + ";
+		aux = aux->next;
+	};
+};
+
+// ======== Operations =============
+
 
 int length(SingleLinkedList &l) {
 	Node *aux = l.begin;
@@ -32,13 +130,7 @@ int length(SingleLinkedList &l) {
 	return count;
 };
 
-void show(SingleLinkedList &l) {
-	Node *aux = l.begin;
-	while (aux != NULL) {
-		cout << aux->coef << "x^" << aux->expo << " ";
-		aux = aux->next;
-	};
-};
+
 
 void freeMemory(SingleLinkedList &l) {
     Node *aux = l.begin;
@@ -58,39 +150,3 @@ bool search(SingleLinkedList &l, float coef) {
     }
     return false;
 }
-
-bool insert(SingleLinkedList &l, float coef, int expo) {
-	Node *n = new Node;
-	if ( n == NULL ) return false;
-	n->coef = coef;
-	n->expo = expo;
-	n->next = NULL;
-
-	if (l.begin == NULL) { // INSERT EMPTY LIST
-		l.begin = n;
-		l.end = n;
-		cout << "\nSuccessful insert" << endl;
-	}
-	else if (element < l.begin->element) { // INSERT TO THE BEGGINING
-		n->next = l.begin;
-		l.begin = n;
-	}
-	else if (element > l.end->element) { // INSERT TO THE END
-		l.end->next = n;
-		l.end = n;
-		cout << "\nSuccessful insert" << endl;
-	}
-	else { // INSERT IN THE MIDDLE
-		Node *aux = l.begin;
-		while (aux->next != NULL) {
-			Node *next = aux->next;
-			if (aux->element < element && element < next->element) {
-				aux->next = n;
-				n->next = next;
-			}
-			aux = aux->next;
-		}
-	}
-
-	return true;
-};
