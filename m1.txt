@@ -1,3 +1,81 @@
+=================== main.cpp ======================
+
+#include <iostream>
+#include "polinomial.hpp"
+
+using namespace std;
+
+
+int main() 
+{
+  
+    SingleLinkedList l1, l2;
+ 
+    initialize(l1);
+    initialize(l2);
+    
+    char option;
+    float coef = 0.0;
+    int expo = 0;
+    do {
+        
+        cout << "\nOptions:\n1 (insert)\n2 (remove monomial)\n3 (sum two polinomials)\n4 (subtract two polinomials)\n5 (search for an exponent)\n6 (show)\n7 ()\n0 (exit)" << endl;
+        cin >> option;
+
+        if (option == '1'){
+            cout << "which polinomial do you want to add a monomial? (1) polinomial 1 or (2) polinomial 2?";
+            cin >> option;
+            cout << "insert a coefficient: ";
+            cin >> coef;
+            cout << "insert an exponent: ";
+            cin >> expo;
+            (option == '1') ? insert(l1, coef, expo) : insert(l2, coef, expo);
+        }
+        else if (option == '2'){
+            cout << "which polinomial do you want to remove a monomial? (1) polinomial 1 or (2) polinomial 2?";
+            cin >> option;
+            cout << "insert an exponent: ";
+            cin >> expo;
+            (option == '1') ? removeMono(l1, expo) : removeMono(l2, expo);
+            cout << "monomy was removed!" << endl;
+        }
+        else if (option == '3'){
+            SingleLinkedList summedPolinomial = operate(l1, l2, '+');
+            show(summedPolinomial);
+        }
+        else if (option == '4'){
+            SingleLinkedList subtractedPolinomial = operate(l1, l2, '-');
+            show(subtractedPolinomial);
+        }
+        else if (option == '5'){
+            cout << "which polinomial do you want to search for a monomial? (1) polinomial 1 or (2) polinomial 2?";
+            cout << "insert an exponent: ";
+            cin >> expo;
+            bool result = (option == '1') ? search(l1, expo) : search(l2, expo);
+            cout << "Monomial with exponent: " << expo << " was searched: " << result << endl;
+        }
+        else if (option == '6') {
+            cout << "List 1: ";
+            show(l1);
+            cout << "\n";
+            cout << "List 2: ";
+            show(l2);
+        }
+        
+    } while (option != '0');
+    
+    freeMemory(l1);
+    freeMemory(l2);
+
+    cout << "End!";
+};
+
+
+
+================== polinomial.hpp =============================
+
+
+
 #include <iostream>
 using namespace std;
 
@@ -12,9 +90,18 @@ struct SingleLinkedList {
 	Node *end;
 };
 
-
 bool isEmpty(SingleLinkedList &l) {
 	return (l.begin == NULL) ? true : false;
+};
+
+void freeMemory(SingleLinkedList &l) {
+    Node *aux = l.begin;
+    Node *n;
+    while (aux != NULL) {
+        n = aux;
+        aux = aux->next;
+        delete n;
+    }
 };
 
 // ======== TAD linked List =============
@@ -24,7 +111,7 @@ void initialize(SingleLinkedList &l) {
 	l.end = NULL;
 };
 
-// order polinomio per expoent
+// order polinomio per exponent
 bool insert(SingleLinkedList &l, float coef, int expo) {
 	Node *n = new Node;
 	if ( n == NULL ) return false;
@@ -32,31 +119,33 @@ bool insert(SingleLinkedList &l, float coef, int expo) {
 	n->expo = expo;
 	n->next = NULL;
 
-	if (l.begin == NULL) { // INSERT EMPTY LIST
+	if (l.begin == NULL) { // insert into an empty list
 		l.begin = n;
 		l.end = n;
 	}
-	else if (expo < l.begin->expo) { // INSERT AT THE BEGGINING
+	else if (expo < l.begin->expo) { // insert at the beggining
 		n->next = l.begin;
 		l.begin = n;
 	}
-	else if (expo > l.end->expo) { // INSERT AT THE ENDING
+	else if (expo > l.end->expo) { // insert at the ending
 		l.end->next = n;
 		l.end = n;
 	}
-	else { // INSERT IN THE MIDDLE
-		Node *before = l.begin;
-		while (before->next != NULL) {
-			Node *next = before->next;
-			if (before->expo < expo && expo < next->expo) {
-				before->next = n;
+	else { // insert in the middle
+		Node *actual = l.begin;
+		while (actual->next != NULL) {
+			Node *next = actual->next;
+			if (actual->expo < expo && expo < next->expo) {
+				actual->next = n;
 				n->next = next;
 			}
-			before = before->next;
+			if (actual->coef == coef) { // it not working this logic
+			    n->coef += actual->coef;
+			    actual = n;
+			}
+			actual = actual->next;
 		}
 	}
-
-    cout << "\nSuccessful insert" << endl;
 	return true;
 };
 
@@ -98,10 +187,17 @@ bool removeMono(SingleLinkedList &l, int expo) {
             before = before->next;
         }
     }
-   
-    cout << "monomy was removed!" << endl;
     return true;
 };
+
+bool search(SingleLinkedList &l, float coef) {
+    Node *aux = l.begin;
+    while (aux != NULL) {
+        if (aux->coef == coef) return true;
+        aux = aux->next;
+    }
+    return false;
+}
 
 void show(SingleLinkedList &l) {
 	Node *aux = l.begin;
@@ -116,37 +212,36 @@ void show(SingleLinkedList &l) {
 	};
 };
 
-// ======== Operations =============
+// ======== Polinomial Operations =============
 
-
-int length(SingleLinkedList &l) {
-	Node *aux = l.begin;
-	int count = 0;
-	while (aux != NULL) {
-		count++;
-		aux = aux->next;
-	};
-	cout << "Length: " << count << endl;
-	return count;
-};
-
-
-
-void freeMemory(SingleLinkedList &l) {
-    Node *aux = l.begin;
-    Node *n;
-    while (aux != NULL) {
-        n = aux;
-        aux = aux->next;
-        delete n;
+/* operate()
+   receive two polinomials (both are SingleLinkedList);
+   operation -> signal of operation which the function will be performing
+      '+' -> sum up two monomials
+      '-' -> subtract two monomials
+*/
+SingleLinkedList operate(SingleLinkedList &poli_one, SingleLinkedList &poli_two, char operation) {
+    if (isEmpty(poli_one) && isEmpty(poli_two)) {
+        return SingleLinkedList{};
     }
-};
-
-bool search(SingleLinkedList &l, float coef) {
-    Node *aux = l.begin;
-    while (aux != NULL) {
-        if (aux->coef == coef) return true;
-        aux = aux->next;
+    
+    SingleLinkedList new_poli;
+    initialize(new_poli);
+    
+    Node *mono_one = poli_one.begin;
+    while (mono_one != NULL) {
+        Node *mono_two = poli_two.begin;
+        while(mono_two != NULL) {
+            if (mono_one->expo == mono_two->expo) {
+                if (operation == '+') {
+                    insert(new_poli, (mono_one->coef + mono_two->coef), mono_one->expo);
+                } else {
+                    insert(new_poli, (mono_one->coef - mono_two->coef), mono_one->expo);
+                }
+            }
+            mono_two = mono_two->next;
+        }
+        mono_one = mono_one->next;
     }
-    return false;
+    return new_poli;
 }
