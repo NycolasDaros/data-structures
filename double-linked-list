@@ -31,3 +31,107 @@ funções que:
   c. Dividir uma lista em várias (k)
   d. Copiar uma lista
 
+
+=============== node.hpp =================
+
+#include <iostream>
+using namespace std;
+
+template <typename T>
+struct Node {
+    T element;
+    Node<T> *prev, *next;
+};
+
+template <typename T>
+struct DoubleLinkedList {
+    Node<T> *begin;
+	Node<T> *end;
+};
+
+template <typename T>
+void initialize(DoubleLinkedList<T> &l) {
+    l.begin = NULL;
+    l.end = NULL;
+};
+
+template template <typename T>
+bool empty(DoubleLinkedList<T> &l) {
+    return (l.begin == NULL) ? true : false;
+};
+
+template template <typename T>
+bool insert(DoubleLinkedList<T> &l, T element) {
+    Node<T> *new = new Node<T>;
+    if (new == NULL) return false;
+    new->element = element;
+    new->prev = NULL;
+    new->next = NULL;
+    
+    if (l.begin == NULL) { // empty list
+        l.begin = new;
+        l.end = new;
+    }
+    else if (element < l.begin->element) { // insert in the beggining
+        new->next = l.begin;
+        l.begin->prev = new;
+        l.begin = new;
+    }
+    else if (element > l.end->element) { // insert in the ending
+        new->prev = l.end;
+        l.end->next = new;
+        l.end = new;
+    }
+    else {
+        Node <T> *prev, *next;
+        prev = l.begin;
+        while (prev != NULL) {
+            next = prev->next; // insert in the middle
+            if (prev->element < element && element < next->element) {
+                prev->next = new;
+                new->prev = prev;
+                next->prev = new;
+                new->next = next;
+                cout << "Element was inserted!" << endl;
+                return true;
+            }
+            prev = prev->next;
+        }
+        
+    }
+    cout << "Element was inserted!" << endl;
+    return true;
+};
+
+template template <typename T>
+Node<T> * search(DoubleLinkedList<T> &l, T element) {
+    Node<T> *n = l.begin;
+    while (n != NULL) {
+        if (n->element == element) return n;
+        n = n->next;
+    }
+    return NULL;
+};
+
+template template <typename T>
+bool removeFrom(DoubleLinkedList<T> &l, T element) {
+    Node<T> * node = search(l, element);
+    if (node == NULL) return false;
+    
+    if (l.begin == node && l.end == node) { // just one element on the list
+        l.begin = NULL;
+        l.end = NULL;
+    }
+    else if (element == l.begin->element) {
+        l.begin = l.begin->next;
+        l.begin->prev = NULL;
+    }
+    // continue..
+    delete node;
+    return true;
+};
+
+
+template template <typename T>
+void name(DoubleLinkedList<T> &l) {}
+
