@@ -9,3 +9,25 @@ struct Node {
   int votes;
   Node *bef, *next;
 }
+
+2. Escreva uma função que ordena uma lista duplamente encadeada que foi criada sem ordem alguma (inserir
+no final).
+
+3. Considere um conjunto de números inteiros implementado através de listas duplamente encadeadas.
+Escreva os seguintes operadores:
+  - Conjunto União
+  - Conjunto Intersecção
+  - Conjunto Pertence
+  - Conjunto Diferença
+
+4. Considere uma lista duplamente encadeada em que cada elemento armazena um caractere. Escreva
+um método TrocaPalavra (Palavra P, Palavra Q, ListaEnc L) que troca todas as ocorrências
+da palavra P por Q na lista L.
+
+5. Considere listas implementadas por encadeamento duplo, então pede-se para implementar
+funções que:
+  a. Concatenar duas listas
+  b. Intercalar (Merge) duas listas
+  c. Dividir uma lista em várias (k)
+  d. Copiar uma lista
+
