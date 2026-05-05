@@ -126,12 +126,44 @@ bool removeFrom(DoubleLinkedList<T> &l, T element) {
         l.begin = l.begin->next;
         l.begin->prev = NULL;
     }
-    // continue..
+    else if (element == l.end->element) {
+      l.end = l.end->prev;
+      l.end->next = NULL;
+    }
+    else {
+      Node<T> *prev = node->prev;
+      Node<T> *next = node->next;
+      prev->next = next;
+      next->prev = prev;
+    }
     delete node;
     return true;
 };
 
 
 template template <typename T>
-void name(DoubleLinkedList<T> &l) {}
-
+DoubleLinkedList<T> unit(DoubleLinkedList<T> &l1, DoubleLinkedList<T> &l2) {
+  if (isEmpty(l1) && isEmpty(l2)) {
+    cout << "Empty" << endl;
+    return DoubleLinkedList{};
+  }
+  
+  DoubleLinkedList<T> l3;
+  initialize(l3);
+  
+  Node<T> *n = l1.begin;
+  while (n != NULL) {
+    insert(l3, n->element);
+    n = n->next;
+  }
+  
+  n = l2.begin;
+  while (n != NULL) {
+    if (search(l3, n->element) == NULL) {
+      insert(l3, n->element);
+    }
+    n = n->next;
+  }
+  
+  return l3;
+}
