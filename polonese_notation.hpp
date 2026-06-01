@@ -1,3 +1,10 @@
+#include <iostream>
+#include <cmath>
+#include "pilhaEstatica.hpp"
+#include "filaEstatica.hpp"
+
+using namespace std;
+
 int precedencia(char operador) {
     if (operador == '^') return 3;
     else if (operador == '/' || operador == '*') return 2;
@@ -28,10 +35,8 @@ bool valido(char c) {
        operador(c) || abre(c) || fecha(c) || c == ' ';
 }
 
-bool opera(Fila<char> &saida){
+bool converte(Fila<char> &saida, string expressao){
     Pilha <char> operadores;
-
-    string expressao = "(a + b) * c";
 
     inicializar(operadores);
     inicializar(saida);
@@ -71,7 +76,7 @@ bool opera(Fila<char> &saida){
                     break;
                 }
                 if (abre(topo)) {
-                    cout << "Fechado incorretamente!" << topo << endl;
+                    cout << "Fechado incorretamente: " << atual << endl;
                     return false;
                 }
                 pop(operadores, topo);
@@ -82,63 +87,106 @@ bool opera(Fila<char> &saida){
     }
     
     char topo;
-    pop(operadores, topo);
-    queue(saida, topo);
+    while (!vazia(operadores)) {
+        pop(operadores, topo);
+        queue(saida, topo);
+    }
 
     liberar(operadores);
     return true;
 }
 
+int valorVariavel(char variavel, int a, int b, int c) {
+    if (variavel == 'a') return a;
+    if (variavel == 'b') return b;
+    if (variavel == 'c') return c;
+    return 0;
+}
+
+int calcular(Fila<char> saida, int a, int b, int c) {
+
+    Pilha<int> valores;
+
+    inicializar(valores);
+
+    for (int i = 0; i < saida.fim; i++) {
+
+        char atual = saida.vetor[i];
+
+        if (isdigit(atual)) {
+            int numero = atual - '0';
+            push(valores, numero);
+        }
+        else if (isalpha(atual)) {
+            int numero = valorVariavel(atual, a, b, c);
+            push(valores, numero);
+        }
+
+        else if (operador(atual)) {
+            int v1, v2;
+
+            pop(valores, v1);
+            pop(valores, v2);
+
+            int resultado = 0;
+
+            switch (atual) {
+                case '+': resultado = v2 + v1; break;
+                case '-': resultado = v2 - v1; break;
+                case '*': resultado = v2 * v1; break;
+                case '/': resultado = v2 / v1; break;
+                case '^': resultado = pow(v2, v1); break;
+            }
+
+            push(valores, resultado);
+        }
+    }
+
+    int resultadoFinal;
+    pop(valores, resultadoFinal);
+
+    liberar(valores);
+
+    return resultadoFinal;
+}
+
 int main()
 {
-    
     int opcao;
     string expressao;
  
     do {
         
-        cout << "   CALCULADORA POLONESA\n";
-        cout << " 1. Inserir expressao\n";
-        cout << " 0. Sair\n";
+        cout << " CALCULADORA POLONESA\n";
+        cout << " 1 - Inserir expressao\n";
+        cout << " 0 - Sair\n";
         cout << " Opcao: ";
         cin >> opcao;
         cin.ignore();
  
         if (opcao == 1) {
-            cout << "\n Regras da expressao:\n";
-            cout << " - Operadores  : + - / * ^\n";
-            cout << " - Digitos     : apenas 1 digito por vez (0-9)\n";
-            cout << " - Variaveis   : apenas 1 letra por vez (a-z)\n";
-            cout << " - Agrupadores : ( ) [ ] { }\n";
-            cout << " Exemplo: 3 + {[5 * a] - [b / (3 + c)]}\n";
             cout << "\n Digite a expressao: ";
             getline(cin, expressao);
             
             Fila<char> saida;
-            if (opera(saida)) {
-                mostrar(saida);
+            if (converte(saida, expressao)) {
+                cout << " Expressão: ";
+                mostrar(saida); cout << endl;
+                
+                int a, b, c;
+                cout << " Digite valores para:\n";
+                cout << " a: "; cin >> a;
+                cout << " b: "; cin >> b;
+                cout << " c: "; cin >> c;
+                
+                int resultado = calcular(saida, a, b, c);
+                cout << "\nResultado: "
+                     << resultado << endl;
             };
-    
+            
+            
             liberar(saida);
 
-            // if (expressao.empty()) {
-            //     cout << "  Erro: expressao vazia!\n";
-            //     break;
-            // }
-
-            // if (!validarTokens(expressao)) break;
-
-            // cout << "\n  Expressao recebida: " << expressao << "\n";
-            // identificarComponentes(expressao);
-            // cout << "\n  [Conversao e resolucao serao implementadas aqui]\n";
-            // break;
- 
-            // case 0:
-            //     cout << "\n  Encerrando...\n";
-            //     break;
- 
-            // default:
-            //     cout << "\n  Opcao invalida!\n";
         }
  
     } while (opcao != 0);
